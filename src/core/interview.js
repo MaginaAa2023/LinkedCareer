@@ -168,16 +168,19 @@ class Interview {
     }
     // 普通步骤的回答存储
     if (currentStep.field.length === 2) {
-      this.data[currentStep.field[0]][currentStep.field[1]] = answer.trim()
+      const [parentKey, childKey] = currentStep.field
+      if (!this.data[parentKey]) this.data[parentKey] = {}
+      this.data[parentKey][childKey] = answer.trim()
     } else if (currentStep.field.length === 3) {
-      if (!this.data[currentStep.field[0]][currentStep.field[1]]) {
-        this.data[currentStep.field[0]][currentStep.field[1]] = {}
-      }
-      this.data[currentStep.field[0]][currentStep.field[1]][currentStep.field[2]] = answer.trim()
+      const [parentKey, index, childKey] = currentStep.field
+      if (!this.data[parentKey]) this.data[parentKey] = []
+      if (!this.data[parentKey][index]) this.data[parentKey][index] = {}
+      this.data[parentKey][index][childKey] = answer.trim()
     }
     this.step++
     // 判断是否还有下一步
     if (this.step < this.onboardingSteps.length) {
+      const nextStep = this.onboardingSteps[this.step]
       // 处理添加更多工作经历的逻辑
       if (currentStep.key === 'addMoreExperience') {
         if (answer.trim() === '是' || answer.trim() === 'yes') {
@@ -191,13 +194,13 @@ class Interview {
             { key: `experience_${expIndex}_achievements`, question: `请问你在这家公司取得的主要业绩有哪些？`, field: ['experiences', expIndex, 'achievements'] },
             { key: 'addMoreExperience', question: '请问你还有其他工作经历需要记录吗？（是/否）', field: ['_meta', 'addMoreExperience'] }
           )
-        } else {
-          // 进入深度梳理确认步骤
-          this.step++
-          return this.onboardingSteps[this.step].question
         }
       }
       // 处理深度梳理确认
+      if (nextStep.key === 'deepDiveConfirm') {
+        return nextStep.question
+      }
+      // 处理深度梳理确认的回答
       if (currentStep.key === 'deepDiveConfirm') {
         if (answer.trim() === '是' || answer.trim() === 'yes') {
           this.data._meta.deepDiveEnabled = true
@@ -212,7 +215,7 @@ class Interview {
           return '✅ 初始化完成！你的职业生涯档案已经建立好了，你可以随时使用 /linkedcareer record 记录工作成长，或者 /linkedcareer resume 生成简历。'
         }
       }
-      return this.onboardingSteps[this.step].question
+      return nextStep.question
     }
     return '✅ 初始化完成！'
   }
