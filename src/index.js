@@ -50,6 +50,11 @@ async function main() {
       await memory.save(data)
       console.log('\n✅ 记录已保存！')
       break
+    case 'deep-dive':
+      console.log('🧠 苏格拉底式深度梳理')
+      console.log('我会逐段梳理你的工作经历，通过提问帮你挖掘更多业绩亮点、能力成长和量化成果\n')
+      // 后续实现深度梳理交互逻辑
+      break
     case 'find':
       const subCommand = process.argv[3]
       if (subCommand === 'job') {
