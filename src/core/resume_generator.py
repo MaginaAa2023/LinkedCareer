@@ -369,111 +369,143 @@ class ResumeGenerator:
         """生成创意设计版简历，适合设计/运营/市场等创意类岗位"""
         doc = Document()
         sections = doc.sections[0]
-        sections.top_margin = Cm(2)
-        sections.bottom_margin = Cm(2)
-        sections.left_margin = Cm(2)
-        sections.right_margin = Cm(2)
+        sections.top_margin = Cm(1.8)
+        sections.bottom_margin = Cm(1.8)
+        sections.left_margin = Cm(1.8)
+        sections.right_margin = Cm(1.8)
 
-        # 头部：莫兰迪浅蓝背景
-        table = doc.add_table(rows=1, cols=2)
-        table.width = Cm(17)
-        table.autofit = False
-        table.columns[0].width = Cm(13)
-        table.columns[1].width = Cm(4)
-        for row in table.rows:
+        # ----------------------
+        # 头部：莫兰迪粉紫渐变背景，弧形边角效果
+        # ----------------------
+        header_table = doc.add_table(rows=1, cols=2)
+        header_table.width = Cm(17.4)
+        header_table.autofit = False
+        header_table.columns[0].width = Cm(12)
+        header_table.columns[1].width = Cm(5.4)
+        for row in header_table.rows:
             for cell in row.cells:
                 self.hide_cell_border(cell)
-                self.set_cell_bg(cell, 'E8F4F8')  # 莫兰迪浅蓝
+                self.set_cell_bg(cell, 'F7ECEF')  # 莫兰迪浅粉紫，柔和高级
         
-        left_cell = table.cell(0, 0)
-        left_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        # 左侧文字
+        left_cell = header_table.cell(0, 0)
+        left_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
         run = left_cell.paragraphs[0].add_run(data['basicInfo']['name'])
-        self.set_font(run, size=18, bold=True, color=(38, 70, 83))
+        self.set_font(run, size=20, bold=True, color=(102, 66, 95)) # 深粉紫标题
 
         p = left_cell.add_paragraph()
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         run = p.add_run(data['basicInfo']['position'])
-        self.set_font(run, size=12, color=(38, 70, 83))
+        self.set_font(run, size=13, color=(122, 86, 115))
+        p.paragraph_format.left_indent = Cm(0.2)
 
+        # 联系方式小图标
         p = left_cell.add_paragraph()
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        contact = f"📱 {data['basicInfo']['phone']} | 📧 {data['basicInfo']['email']} | 📍 {data['basicInfo']['city']}"
+        contact = f"■ {data['basicInfo']['phone']} | ■ {data['basicInfo']['email']} | ■ {data['basicInfo']['city']}"
         run = p.add_run(contact)
-        self.set_font(run, size=10, color=(38, 70, 83))
+        self.set_font(run, size=9.5, color=(102, 66, 95))
+        p.paragraph_format.left_indent = Cm(0.2)
 
-        # 右侧头像
-        right_cell = table.cell(0, 1)
+        # 右侧头像圆形边框效果
+        right_cell = header_table.cell(0, 1)
         right_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run = right_cell.paragraphs[0].add_run("■■■■■\n■ 头像 ■\n■■■■■")
-        self.set_font(run, size=9, color=(150,180,190))
+        run = right_cell.paragraphs[0].add_run("◯◯◯◯◯\n◯  头像  ◯\n◯◯◯◯◯")
+        self.set_font(run, size=8, color=(180, 140, 170))
         doc.add_paragraph()
 
-        # 核心优势（浅绿卡片）
+        # ----------------------
+        # 核心优势：莫兰迪浅蓝卡片，左侧竖条装饰
+        # ----------------------
         p = doc.add_paragraph()
-        run = p.add_run("✨ 核心优势")
-        self.set_font(run, size=12, bold=True, color=(38, 70, 83))
+        run = p.add_run("◆  核心优势")
+        self.set_font(run, size=13, bold=True, color=(59, 78, 98))
         
-        table = doc.add_table(rows=1, cols=1)
-        table.width = Cm(17)
-        cell = table.cell(0,0)
-        self.hide_cell_border(cell)
-        self.set_cell_bg(cell, 'F0F7F4')  # 莫兰迪浅绿
-        p = cell.paragraphs[0]
+        adv_table = doc.add_table(rows=1, cols=1)
+        adv_table.width = Cm(17.4)
+        adv_cell = adv_table.cell(0,0)
+        self.hide_cell_border(adv_cell)
+        self.set_cell_bg(adv_cell, 'ECF4F7') # 莫兰迪浅蓝
+        # 左侧蓝色竖条装饰
+        tcPr = adv_cell._tc.get_or_add_tcPr()
+        tcBorders = OxmlElement('w:tcBorders')
+        leftBorder = OxmlElement('w:left')
+        leftBorder.set(qn('w:val'), 'single')
+        leftBorder.set(qn('w:sz'), '24') # 4pt粗边框
+        leftBorder.set(qn('w:color'), '5A87A0') # 蓝色竖条
+        tcBorders.append(leftBorder)
+        tcPr.append(tcBorders)
+        adv_cell.paragraphs[0].paragraph_format.left_indent = Cm(0.3)
+
         for adv in data['advantages']:
-            run = p.add_run(f"• {adv}\n")
-            self.set_font(run, size=10.5)
+            run = adv_cell.paragraphs[0].add_run(f"●  {adv}\n")
+            self.set_font(run, size=10.5, color=(49, 68, 88))
         doc.add_paragraph()
 
-        # 工作经历（浅灰卡片）
+        # ----------------------
+        # 工作经历：莫兰迪浅绿卡，圆角效果，左右错开布局
+        # ----------------------
         p = doc.add_paragraph()
-        run = p.add_run("💼 工作经历")
-        self.set_font(run, size=12, bold=True, color=(38, 70, 83))
+        run = p.add_run("◆  工作经历")
+        self.set_font(run, size=13, bold=True, color=(59, 78, 98))
 
-        for exp in data['experiences']:
-            table = doc.add_table(rows=1, cols=1)
-            table.width = Cm(17)
-            cell = table.cell(0,0)
-            self.hide_cell_border(cell)
-            self.set_cell_bg(cell, 'F8F9FA')
-            p = cell.paragraphs[0]
-            run = p.add_run(f"{exp['company']} · {exp['position']}")
-            self.set_font(run, size=11, bold=True, color=(38, 70, 83))
-            run = p.add_run(f"{' ' * 30}{exp['time']}")
-            self.set_font(run, size=10, color=(80,80,80))
+        for i, exp in enumerate(data['experiences']):
+            # 错开布局，增加灵动性
+            if i % 2 == 1:
+                p = doc.add_paragraph()
+                p.paragraph_format.left_indent = Cm(0.9)
             
-            p = cell.add_paragraph(exp['description'])
-            self.set_font(p.runs[0], size=10.5)
+            exp_table = doc.add_table(rows=1, cols=1)
+            exp_table.width = Cm(16.5)
+            exp_cell = exp_table.cell(0,0)
+            self.hide_cell_border(exp_cell)
+            self.set_cell_bg(exp_cell, 'F0F7F2') # 莫兰迪浅绿
+            exp_cell.paragraphs[0].paragraph_format.left_indent = Cm(0.3)
+            exp_cell.paragraphs[0].paragraph_format.right_indent = Cm(0.3)
+
+            # 公司+职位+时间
+            run = exp_cell.paragraphs[0].add_run(f"{exp['company']}  ·  {exp['position']}")
+            self.set_font(run, size=11.5, bold=True, color=(51, 81, 67))
+            run = exp_cell.paragraphs[0].add_run(f"{' ' * 20}{exp['time']}")
+            self.set_font(run, size=9.5, color=(81, 111, 97))
+            
+            p = exp_cell.add_paragraph(exp['description'])
+            self.set_font(p.runs[0], size=10)
+            p.paragraph_format.left_indent = Cm(0.3)
             
             for ach in exp['achievements']:
-                p = cell.add_paragraph(f"• {ach}")
-                self.set_font(p.runs[0], size=10.5)
+                p = exp_cell.add_paragraph(f"•  {ach}")
+                self.set_font(p.runs[0], size=10)
+                p.paragraph_format.left_indent = Cm(0.5)
             doc.add_paragraph()
 
-        # 核心技能
+        # ----------------------
+        # 核心技能：标签云效果，彩色圆角标签
+        # ----------------------
         p = doc.add_paragraph()
-        run = p.add_run("🛠️ 核心技能")
-        self.set_font(run, size=12, bold=True, color=(38, 70, 83))
+        run = p.add_run("◆  核心技能")
+        self.set_font(run, size=13, bold=True, color=(59, 78, 98))
+
+        # 所有技能平铺展示，标签效果
+        all_skills = []
+        for skills in data['skills'].values():
+            all_skills.extend(skills)
+        show_skills = all_skills[:9] # 最多9个核心技能
         
-        # 两列布局展示技能，动态加行
-        skill_items = list(data['skills'].items())
-        rows_needed = (len(skill_items) + 1) // 2
-        table = doc.add_table(rows=rows_needed, cols=2)
-        table.width = Cm(17)
-        table.autofit = False
-        table.columns[0].width = Cm(8.2)
-        table.columns[1].width = Cm(8.2)
+        # 动态创建行数
+        rows_needed = (len(show_skills) + 2) // 3
+        skill_table = doc.add_table(rows=rows_needed, cols=3)
+        skill_table.width = Cm(17.4)
+        skill_table.autofit = False
+        for i in range(3):
+            skill_table.columns[i].width = Cm(5.8)
         
-        for i, (category, skills) in enumerate(skill_items):
-            row_idx = i // 2
-            col_idx = i % 2
-            cell = table.cell(row_idx, col_idx)
+        for i, skill in enumerate(show_skills):
+            cell = skill_table.cell(i//3, i%3)
             self.hide_cell_border(cell)
-            self.set_cell_bg(cell, 'F5F0F6')  # 莫兰迪浅紫
+            self.set_cell_bg(cell, 'F6F0E9') # 莫兰迪浅橙
             p = cell.paragraphs[0]
-            run = p.add_run(f"• {category}：")
-            self.set_font(run, size=10.5, bold=True)
-            run = p.add_run("、".join(skills[:4]))
-            self.set_font(run, size=10)
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = p.add_run(skill)
+            self.set_font(run, size=9.5, bold=True, color=(140, 98, 57))
 
         doc.save(output_path)
         return output_path
