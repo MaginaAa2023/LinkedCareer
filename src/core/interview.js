@@ -34,10 +34,40 @@ class Interview {
       { key: 'experienceTime', question: '请问你入职和离职的时间是？（格式：2020-07 - 至今）', field: ['experiences', 0, 'time'] },
       { key: 'experienceDesc', question: '请简单描述下你在这家公司的主要工作职责？', field: ['experiences', 0, 'description'] },
       { key: 'experienceAchievements', question: '请问你在这家公司取得的主要业绩有哪些？（可以分点说明）', field: ['experiences', 0, 'achievements'] },
-      { key: 'addMoreExperience', question: '请问你还有其他工作经历需要记录吗？（是/否）', field: ['_meta', 'addMoreExperience'] }
+      { key: 'addMoreExperience', question: '请问你还有其他工作经历需要记录吗？（是/否）', field: ['_meta', 'addMoreExperience'] },
+      { key: 'deepDiveConfirm', question: '✅ 基础职业生涯档案已经收集完成！\n请问你是否需要进行深度梳理？我会像面试官一样通过提问帮你挖掘更多业绩亮点、能力成长和量化成果，让你的职业经历更有说服力。（是/否）', field: ['_meta', 'deepDiveEnabled'] }
+    ]
+    // 深度梳理的问题模板（苏格拉底式提问）
+    this.deepDiveQuestions = [
+      {
+        key: 'project_challenge',
+        question: '在这段工作经历中，你主导的最有挑战性的项目是什么？\nA. 技术攻坚类项目 B. 跨部门协作类项目 C. 新业务从0到1搭建 D. 成本/效率优化类项目 E. 其他',
+        field: ['deepDive', 'challenge']
+      },
+      {
+        key: 'project_result',
+        question: '这个项目最终取得了什么量化成果？比如收入增长XX%、效率提升XX%、成本下降XX元等，请尽量用数字描述。',
+        field: ['deepDive', 'result']
+      },
+      {
+        key: 'core_contribution',
+        question: '你在这个项目中的核心贡献是什么？哪些成果是因为你的决策或行动直接带来的？',
+        field: ['deepDive', 'contribution']
+      },
+      {
+        key: 'ability_growth',
+        question: '通过这个项目，你获得了哪些关键能力提升？或者总结出了什么可复用的方法论？',
+        field: ['deepDive', 'growth']
+      }
     ]
     // 用来存储缺失的基础信息字段
     this.missingBasicFields = []
+    // 当前深度梳理的工作经历索引
+    this.currentDeepDiveExpIndex = 0
+    // 当前深度梳理的问题索引
+    this.currentDeepDiveQuestionIndex = 0
+    // 是否正在进行深度梳理
+    this.isDeepDiving = false
   }
   // 从用户输入中提取基础信息
   extractBasicInfo(text) {
@@ -70,10 +100,45 @@ class Interview {
       _meta: {}
     }
     this.missingBasicFields = []
+    this.currentDeepDiveExpIndex = 0
+    this.currentDeepDiveQuestionIndex = 0
+    this.isDeepDiving = false
     return this.onboardingSteps[0].question
   }
   async processAnswer(answer) {
     const currentStep = this.onboardingSteps[this.step]
+    // 如果正在深度梳理，单独处理
+    if (this.isDeepDiving) {
+      const currentExp = this.data.experiences[this.currentDeepDiveExpIndex]
+      const currentQuestion = this.deepDiveQuestions[this.currentDeepDiveQuestionIndex]
+      // 保存回答到对应工作经历的深度信息中
+      if (!currentExp.deepDive) currentExp.deepDive = {}
+      currentExp.deepDive[currentQuestion.field[1]] = answer.trim()
+      // 如果是成果类回答，自动添加到业绩列表中
+      if (currentQuestion.key === 'project_result' || currentQuestion.key === 'core_contribution') {
+        if (!currentExp.achievements) currentExp.achievements = []
+        currentExp.achievements.push(answer.trim())
+      }
+      // 下一个问题
+      this.currentDeepDiveQuestionIndex++
+      if (this.currentDeepDiveQuestionIndex < this.deepDiveQuestions.length) {
+        // 继续问当前工作经历的下一个问题
+        return this.deepDiveQuestions[this.currentDeepDiveQuestionIndex].question
+      } else {
+        // 当前工作经历梳理完成，下一段经历
+        this.currentDeepDiveExpIndex++
+        this.currentDeepDiveQuestionIndex = 0
+        if (this.currentDeepDiveExpIndex < this.data.experiences.length) {
+          // 开始下一段工作经历的深度梳理
+          const nextExp = this.data.experiences[this.currentDeepDiveExpIndex]
+          return `### 开始深度梳理第${this.currentDeepDiveExpIndex+1}段工作经历：${nextExp.company} - ${nextExp.position}\n${this.deepDiveQuestions[this.currentDeepDiveQuestionIndex].question}`
+        } else {
+          // 所有工作经历梳理完成
+          this.isDeepDiving = false
+          return '✅ 深度梳理完成！你的职业生涯档案已经非常完善了，随时可以生成简历或记录新的工作成长~'
+        }
+      }
+    }
     // 处理基础信息收集阶段（合并提问+智能提取+缺失追问）
     if (currentStep.key === 'basicInfoCollect' || this.missingBasicFields.length > 0) {
       // 提取用户输入的所有基础信息
@@ -127,7 +192,23 @@ class Interview {
             { key: 'addMoreExperience', question: '请问你还有其他工作经历需要记录吗？（是/否）', field: ['_meta', 'addMoreExperience'] }
           )
         } else {
-          // 结束引导
+          // 进入深度梳理确认步骤
+          this.step++
+          return this.onboardingSteps[this.step].question
+        }
+      }
+      // 处理深度梳理确认
+      if (currentStep.key === 'deepDiveConfirm') {
+        if (answer.trim() === '是' || answer.trim() === 'yes') {
+          this.data._meta.deepDiveEnabled = true
+          this.isDeepDiving = true
+          this.currentDeepDiveExpIndex = 0
+          this.currentDeepDiveQuestionIndex = 0
+          // 开始第一段工作经历的深度梳理
+          const exp = this.data.experiences[this.currentDeepDiveExpIndex]
+          return `### 开始深度梳理第${this.currentDeepDiveExpIndex+1}段工作经历：${exp.company} - ${exp.position}\n${this.deepDiveQuestions[this.currentDeepDiveQuestionIndex].question}`
+        } else {
+          // 不进行深度梳理，结束引导
           return '✅ 初始化完成！你的职业生涯档案已经建立好了，你可以随时使用 /linkedcareer record 记录工作成长，或者 /linkedcareer resume 生成简历。'
         }
       }
@@ -146,6 +227,13 @@ class Interview {
   getCollectedData() {
     // 移除元数据
     const { _meta, ...cleanData } = this.data
+    // 移除工作经历中的深度梳理临时字段
+    if (cleanData.experiences) {
+      cleanData.experiences = cleanData.experiences.map(exp => {
+        const { deepDive, ...rest } = exp
+        return rest
+      })
+    }
     return cleanData
   }
 }

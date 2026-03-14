@@ -50,6 +50,15 @@ async function main() {
       await memory.save(data)
       console.log('\n✅ 记录已保存！')
       break
+    case 'found':
+      const subCommand = process.argv[3]
+      if (subCommand === 'job') {
+        console.log('🔍 岗位匹配功能正在开发中，敬请期待~')
+        console.log('后续将支持对接BOSS直聘、智联招聘、脉脉等平台，自动匹配适合你的岗位')
+      } else {
+        console.log('可用命令：/linkedcareer found job  匹配适合你的岗位')
+      }
+      break
     case 'resume':
       console.log('📄 开始生成简历，请选择模板类型：')
       console.log('1. 极简版（1页，适合初筛）')
