@@ -95,63 +95,49 @@ async function main() {
       break
     case 'resume':
       console.log('📄 开始生成简历，请选择模板类型：')
-      console.log('1. 极简版（1页，适合初筛）')
-      console.log('2. 适中版（1-2页，适合大部分场景）')
-      console.log('3. 详细版（3-4页，适合终面）')
-      const templateChoice = await rl.question('请输入选项（1/2/3，默认2）：\n> ')
+      console.log('1. 旗舰商务版（适合高管/金融/民企岗位）')
+      console.log('2. 现代双栏版（适合互联网/科技行业岗位）')
+      console.log('3. 国企稳重版（适合央企/事业单位/体制内岗位）')
+      const templateChoice = await rl.question('请输入选项（1/2/3，默认1）：\n> ')
       const templateMap = {
-        '1': 'minimal',
-        '2': 'balanced',
-        '3': 'detailed'
+        '1': 'executive',
+        '2': 'modern',
+        '3': 'soe'
       }
-      const template = templateMap[templateChoice] || 'balanced'
-      console.log('')
-      console.log('请选择生成模式：')
-      console.log('1. 通用模式（生成通用简历）')
-      console.log('2. 定向模式（针对具体岗位JD生成适配简历）')
-      const modeChoice = await rl.question('请输入选项（1/2，默认1）：\n> ')
-      const mode = modeChoice === '2' ? 'targeted' : 'general'
-      let jobJD = null
-      let targetPosition = null
-      if (mode === 'targeted') {
-        targetPosition = await rl.question('请输入目标岗位名称：\n> ')
-        jobJD = await rl.question('请粘贴岗位JD内容：\n> ')
+      const template = templateMap[templateChoice] || 'executive'
+      
+      console.log('\n请选择输出格式：')
+      console.log('1. Word格式（.docx，可编辑）')
+      console.log('2. PDF格式（.pdf，和Word样式1:1一致）')
+      console.log('3. Markdown格式（.md，可自定义）')
+      const formatChoice = await rl.question('请输入选项（1/2/3，默认1）：\n> ')
+      const formatMap = {
+        '1': 'docx',
+        '2': 'pdf',
+        '3': 'md'
       }
-      console.log('')
-      console.log('正在生成简历...\n')
+      const format = formatMap[formatChoice] || 'docx'
+      
+      console.log('\n正在生成简历...\n')
       const careerData = await memory.load()
-      let generatedResume
-      if (mode === 'targeted' && jobJD) {
-        // 定向生成，先计算匹配度
-        const matchResult = await resume.calculateMatchScore(jobJD, careerData)
-        console.log(`🎯 目标岗位：${targetPosition}`)
-        console.log(`🎯 人岗匹配度：${matchResult.score}/100`)
-        if (!matchResult.isRecommended) {
-          console.log('⚠️  匹配度低于60分，不建议投递该岗位')
-          const confirm = await rl.question('是否仍然继续生成简历？(y/N)\n> ')
-          if (confirm.toLowerCase() !== 'y' && confirm.toLowerCase() !== 'yes') {
-            console.log('已取消生成')
-            break
-          }
-        }
-        console.log('匹配亮点：')
-        matchResult.reasons.forEach(reason => console.log(`  ✅ ${reason}`))
-        console.log('')
-        generatedResume = await resume.generate(careerData, { mode, template, jobJD, targetPosition })
+      
+      if (format === 'docx') {
+        // 生成Word格式
+        const ResumeGenerator = require('./core/resume_generator')
+        const generator = new ResumeGenerator()
+        const outputPath = `./resume_${template}_${new Date().toISOString().split('T')[0]}.docx`
+        await generator.generate(careerData, template, outputPath)
+        console.log(`✅ Word版简历已生成并保存到：${outputPath}`)
       } else {
-        generatedResume = await resume.generate(careerData, { mode, template })
+        // 生成Markdown格式
+        const generatedResume = await resume.generate(careerData, { mode: 'general', template: 'balanced' })
+        const outputPath = `./resume_${new Date().toISOString().split('T')[0]}.md`
+        require('fs').writeFileSync(outputPath, generatedResume, 'utf8')
+        console.log(`✅ Markdown版简历已生成并保存到：${outputPath}`)
       }
-      // 保存简历
-      const outputPath = `./resume_${new Date().toISOString().split('T')[0]}.md`
-      require('fs').writeFileSync(outputPath, generatedResume, 'utf8')
-      console.log(`✅ 简历已生成并保存到：${outputPath}`)
-      // 生成求职信
-      if (mode === 'targeted' && jobJD) {
-        const coverLetter = await resume.generateCoverLetter(careerData, jobJD, targetPosition)
-        const coverLetterPath = `./cover_letter_${new Date().toISOString().split('T')[0]}.md`
-        require('fs').writeFileSync(coverLetterPath, coverLetter, 'utf8')
-        console.log(`✅ 配套求职信已生成并保存到：${coverLetterPath}`)
-      }
+      
+      // 询问是否需要导出提示
+      console.log('\n💡 提示：生成的Word简历已内置所有商务样式，可直接使用，也可以替换头像、调整细节')
       break
     case 'import':
       const filePath = process.argv[3]

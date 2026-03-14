@@ -68,6 +68,10 @@ class Interview {
     this.currentDeepDiveQuestionIndex = 0
     // 是否正在进行深度梳理
     this.isDeepDiving = false
+    // 深度梳理的经历列表（优先最近5年）
+    this.deepDiveExpList = []
+    // 是否已经完成最近5年的梳理，待确认是否继续更早的经历
+    this.needConfirmMoreDive = false
   }
   // 从用户输入中提取基础信息
   extractBasicInfo(text) {
@@ -109,7 +113,33 @@ class Interview {
     const currentStep = this.onboardingSteps[this.step]
     // 如果正在深度梳理，单独处理
     if (this.isDeepDiving) {
-      const currentExp = this.data.experiences[this.currentDeepDiveExpIndex]
+      // 如果是待确认是否继续梳理更早的经历
+      if (this.needConfirmMoreDive) {
+        if (answer.trim() === '是' || answer.trim() === 'yes') {
+          // 加载更早的经历继续梳理
+          const currentYear = new Date().getFullYear()
+          this.deepDiveExpList = this.data.experiences.filter(exp => {
+            const endYear = exp.endTime === '至今' ? currentYear : parseInt(exp.endTime?.split('-')[0] || 0)
+            return endYear < currentYear - 5
+          })
+          this.currentDeepDiveExpIndex = 0
+          this.currentDeepDiveQuestionIndex = 0
+          this.needConfirmMoreDive = false
+          if (this.deepDiveExpList.length === 0) {
+            this.isDeepDiving = false
+            return '✅ 深度梳理完成！没有更早的工作经历需要梳理了，你的职业生涯档案已经非常完善了~'
+          }
+          // 开始第一段更早经历的深度梳理
+          const exp = this.deepDiveExpList[this.currentDeepDiveExpIndex]
+          return `### 开始深度梳理更早的工作经历（第${this.currentDeepDiveExpIndex+1}/${this.deepDiveExpList.length}段）：${exp.company} - ${exp.position}\n${this.deepDiveQuestions[this.currentDeepDiveQuestionIndex].question}`
+        } else {
+          // 不继续梳理，结束
+          this.isDeepDiving = false
+          return '✅ 深度梳理完成！你的职业生涯档案已经非常完善了，随时可以生成简历或记录新的工作成长~'
+        }
+      }
+
+      const currentExp = this.deepDiveExpList[this.currentDeepDiveExpIndex]
       const currentQuestion = this.deepDiveQuestions[this.currentDeepDiveQuestionIndex]
       // 保存回答到对应工作经历的深度信息中
       if (!currentExp.deepDive) currentExp.deepDive = {}
@@ -128,14 +158,25 @@ class Interview {
         // 当前工作经历梳理完成，下一段经历
         this.currentDeepDiveExpIndex++
         this.currentDeepDiveQuestionIndex = 0
-        if (this.currentDeepDiveExpIndex < this.data.experiences.length) {
+        if (this.currentDeepDiveExpIndex < this.deepDiveExpList.length) {
           // 开始下一段工作经历的深度梳理
-          const nextExp = this.data.experiences[this.currentDeepDiveExpIndex]
-          return `### 开始深度梳理第${this.currentDeepDiveExpIndex+1}段工作经历：${nextExp.company} - ${nextExp.position}\n${this.deepDiveQuestions[this.currentDeepDiveQuestionIndex].question}`
+          const nextExp = this.deepDiveExpList[this.currentDeepDiveExpIndex]
+          return `### 开始深度梳理第${this.currentDeepDiveExpIndex+1}/${this.deepDiveExpList.length}段工作经历：${nextExp.company} - ${nextExp.position}\n${this.deepDiveQuestions[this.currentDeepDiveQuestionIndex].question}`
         } else {
-          // 所有工作经历梳理完成
-          this.isDeepDiving = false
-          return '✅ 深度梳理完成！你的职业生涯档案已经非常完善了，随时可以生成简历或记录新的工作成长~'
+          // 最近5年的经历已经梳理完成，询问是否继续梳理更早的经历
+          const currentYear = new Date().getFullYear()
+          const hasOlderExperiences = this.data.experiences.some(exp => {
+            const endYear = exp.endTime === '至今' ? currentYear : parseInt(exp.endTime?.split('-')[0] || 0)
+            return endYear < currentYear - 5
+          })
+          if (hasOlderExperiences) {
+            this.needConfirmMoreDive = true
+            return `✅ 最近5年的工作经历已经深度梳理完成！\n你还有更早的工作经历，是否需要继续进行深度梳理？（是/否）`
+          } else {
+            // 所有工作经历梳理完成
+            this.isDeepDiving = false
+            return '✅ 深度梳理完成！你的职业生涯档案已经非常完善了，随时可以生成简历或记录新的工作成长~'
+          }
         }
       }
     }
@@ -207,9 +248,20 @@ class Interview {
           this.isDeepDiving = true
           this.currentDeepDiveExpIndex = 0
           this.currentDeepDiveQuestionIndex = 0
+          this.needConfirmMoreDive = false
+          // 优先筛选最近5年的工作经历进行深度梳理
+          const currentYear = new Date().getFullYear()
+          this.deepDiveExpList = this.data.experiences.filter(exp => {
+            const endYear = exp.endTime === '至今' ? currentYear : parseInt(exp.endTime?.split('-')[0] || 0)
+            return endYear >= currentYear - 5
+          })
+          // 如果没有最近5年的经历，用全部经历
+          if (this.deepDiveExpList.length === 0) {
+            this.deepDiveExpList = [...this.data.experiences]
+          }
           // 开始第一段工作经历的深度梳理
-          const exp = this.data.experiences[this.currentDeepDiveExpIndex]
-          return `### 开始深度梳理第${this.currentDeepDiveExpIndex+1}段工作经历：${exp.company} - ${exp.position}\n${this.deepDiveQuestions[this.currentDeepDiveQuestionIndex].question}`
+          const exp = this.deepDiveExpList[this.currentDeepDiveExpIndex]
+          return `### 开始深度梳理最近5年工作经历（第${this.currentDeepDiveExpIndex+1}/${this.deepDiveExpList.length}段）：${exp.company} - ${exp.position}\n${this.deepDiveQuestions[this.currentDeepDiveQuestionIndex].question}`
         } else {
           // 不进行深度梳理，结束引导
           return '✅ 初始化完成！你的职业生涯档案已经建立好了，你可以随时使用 /linkedcareer record 记录工作成长，或者 /linkedcareer resume 生成简历。'

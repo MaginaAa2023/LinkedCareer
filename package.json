@@ -6,7 +6,27 @@
   "scripts": {
     "test": "node --test tests/"
   },
-  "keywords": ["openclaw", "career", "resume", "cv"],
+  "keywords": [
+    "openclaw",
+    "career",
+    "resume",
+    "cv"
+  ],
   "author": "MaginaAa2023",
-  "license": "MIT"
+  "license": "MIT",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/MaginaAa2023/LinkedCareer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MaginaAa2023/LinkedCareer/issues"
+  },
+  "homepage": "https://github.com/MaginaAa2023/LinkedCareer#readme",
+  "dependencies": {
+    "puppeteer": "^24.39.1"
+  }
 }
