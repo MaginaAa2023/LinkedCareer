@@ -95,14 +95,18 @@ async function main() {
       break
     case 'resume':
       console.log('📄 开始生成简历，请选择模板类型：')
-      console.log('1. 旗舰商务版（适合高管/金融/民企岗位）')
-      console.log('2. 现代双栏版（适合互联网/科技行业岗位）')
-      console.log('3. 国企稳重版（适合央企/事业单位/体制内岗位）')
-      const templateChoice = await rl.question('请输入选项（1/2/3，默认1）：\n> ')
+      console.log('1. 🎩 旗舰商务版 | 深蓝稳重风格 | 适合高管/金融/民企岗位投递')
+      console.log('2. 💻 现代双栏版 | 科技蓝侧边栏 | 适合互联网/科技行业岗位')
+      console.log('3. 🏛️ 国企稳重版 | 深灰正式风格 | 适合央企/事业单位/体制内求职')
+      console.log('4. 🎨 创意设计版 | 莫兰迪卡片式 | 适合设计/运营/市场创意类岗位')
+      console.log('5. 📄 极简通用版 | 黑白一页纸 | 适合海投/初筛/校招通用场景')
+      const templateChoice = await rl.question('请输入选项（1/2/3/4/5，默认1）：\n> ')
       const templateMap = {
         '1': 'executive',
         '2': 'modern',
-        '3': 'soe'
+        '3': 'soe',
+        '4': 'creative',
+        '5': 'minimal'
       }
       const template = templateMap[templateChoice] || 'executive'
       

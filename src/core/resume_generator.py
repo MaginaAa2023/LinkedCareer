@@ -8,9 +8,11 @@ class ResumeGenerator:
     def __init__(self):
         # 支持的模板列表
         self.templates = {
-            'executive': '旗舰商务版（适合高管/金融/国企）',
-            'modern': '现代双栏版（适合互联网/科技行业）',
-            'soe': '国企稳重版（适合央企/事业单位/体制内）'
+            'executive': '旗舰商务版 | 深蓝稳重 | 适合高管/金融/民企岗位',
+            'modern': '现代双栏版 | 科技蓝侧边栏 | 适合互联网/科技行业',
+            'soe': '国企稳重版 | 深灰正式 | 适合央企/事业单位/体制内',
+            'creative': '创意设计版 | 莫兰迪色系卡片式 | 适合设计/运营/市场创意类岗位',
+            'minimal': '极简通用版 | 黑白一页纸 | 适合海投/初筛/校招通用场景'
         }
     
     def set_font(self, run, size=10.5, bold=False, color=None):
@@ -363,6 +365,195 @@ class ResumeGenerator:
         doc.save(output_path)
         return output_path
     
+    def generate_creative(self, data, output_path):
+        """生成创意设计版简历，适合设计/运营/市场等创意类岗位"""
+        doc = Document()
+        sections = doc.sections[0]
+        sections.top_margin = Cm(2)
+        sections.bottom_margin = Cm(2)
+        sections.left_margin = Cm(2)
+        sections.right_margin = Cm(2)
+
+        # 头部：莫兰迪浅蓝背景
+        table = doc.add_table(rows=1, cols=2)
+        table.width = Cm(17)
+        table.autofit = False
+        table.columns[0].width = Cm(13)
+        table.columns[1].width = Cm(4)
+        for row in table.rows:
+            for cell in row.cells:
+                self.hide_cell_border(cell)
+                self.set_cell_bg(cell, 'E8F4F8')  # 莫兰迪浅蓝
+        
+        left_cell = table.cell(0, 0)
+        left_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = left_cell.paragraphs[0].add_run(data['basicInfo']['name'])
+        self.set_font(run, size=18, bold=True, color=(38, 70, 83))
+
+        p = left_cell.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = p.add_run(data['basicInfo']['position'])
+        self.set_font(run, size=12, color=(38, 70, 83))
+
+        p = left_cell.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        contact = f"📱 {data['basicInfo']['phone']} | 📧 {data['basicInfo']['email']} | 📍 {data['basicInfo']['city']}"
+        run = p.add_run(contact)
+        self.set_font(run, size=10, color=(38, 70, 83))
+
+        # 右侧头像
+        right_cell = table.cell(0, 1)
+        right_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = right_cell.paragraphs[0].add_run("■■■■■\n■ 头像 ■\n■■■■■")
+        self.set_font(run, size=9, color=(150,180,190))
+        doc.add_paragraph()
+
+        # 核心优势（浅绿卡片）
+        p = doc.add_paragraph()
+        run = p.add_run("✨ 核心优势")
+        self.set_font(run, size=12, bold=True, color=(38, 70, 83))
+        
+        table = doc.add_table(rows=1, cols=1)
+        table.width = Cm(17)
+        cell = table.cell(0,0)
+        self.hide_cell_border(cell)
+        self.set_cell_bg(cell, 'F0F7F4')  # 莫兰迪浅绿
+        p = cell.paragraphs[0]
+        for adv in data['advantages']:
+            run = p.add_run(f"• {adv}\n")
+            self.set_font(run, size=10.5)
+        doc.add_paragraph()
+
+        # 工作经历（浅灰卡片）
+        p = doc.add_paragraph()
+        run = p.add_run("💼 工作经历")
+        self.set_font(run, size=12, bold=True, color=(38, 70, 83))
+
+        for exp in data['experiences']:
+            table = doc.add_table(rows=1, cols=1)
+            table.width = Cm(17)
+            cell = table.cell(0,0)
+            self.hide_cell_border(cell)
+            self.set_cell_bg(cell, 'F8F9FA')
+            p = cell.paragraphs[0]
+            run = p.add_run(f"{exp['company']} · {exp['position']}")
+            self.set_font(run, size=11, bold=True, color=(38, 70, 83))
+            run = p.add_run(f"{' ' * 30}{exp['time']}")
+            self.set_font(run, size=10, color=(80,80,80))
+            
+            p = cell.add_paragraph(exp['description'])
+            self.set_font(p.runs[0], size=10.5)
+            
+            for ach in exp['achievements']:
+                p = cell.add_paragraph(f"• {ach}")
+                self.set_font(p.runs[0], size=10.5)
+            doc.add_paragraph()
+
+        # 核心技能
+        p = doc.add_paragraph()
+        run = p.add_run("🛠️ 核心技能")
+        self.set_font(run, size=12, bold=True, color=(38, 70, 83))
+        
+        # 两列布局展示技能，动态加行
+        skill_items = list(data['skills'].items())
+        rows_needed = (len(skill_items) + 1) // 2
+        table = doc.add_table(rows=rows_needed, cols=2)
+        table.width = Cm(17)
+        table.autofit = False
+        table.columns[0].width = Cm(8.2)
+        table.columns[1].width = Cm(8.2)
+        
+        for i, (category, skills) in enumerate(skill_items):
+            row_idx = i // 2
+            col_idx = i % 2
+            cell = table.cell(row_idx, col_idx)
+            self.hide_cell_border(cell)
+            self.set_cell_bg(cell, 'F5F0F6')  # 莫兰迪浅紫
+            p = cell.paragraphs[0]
+            run = p.add_run(f"• {category}：")
+            self.set_font(run, size=10.5, bold=True)
+            run = p.add_run("、".join(skills[:4]))
+            self.set_font(run, size=10)
+
+        doc.save(output_path)
+        return output_path
+    
+    def generate_minimal(self, data, output_path):
+        """生成极简通用版简历，一页纸，适合海投/初筛/校招"""
+        doc = Document()
+        sections = doc.sections[0]
+        sections.top_margin = Cm(1.5)
+        sections.bottom_margin = Cm(1.5)
+        sections.left_margin = Cm(2)
+        sections.right_margin = Cm(2)
+
+        # 头部紧凑布局
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = p.add_run(data['basicInfo']['name'])
+        self.set_font(run, size=16, bold=True)
+
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        contact = f"{data['basicInfo']['phone']} | {data['basicInfo']['email']} | {data['basicInfo']['city']} | {data['basicInfo']['degree']}"
+        run = p.add_run(contact)
+        self.set_font(run, size=9.5)
+        p = doc.add_paragraph("_" * 80)
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        self.set_font(p.runs[0], size=8, color=(150,150,150))
+        doc.add_paragraph()
+
+        # 核心优势（紧凑）
+        p = doc.add_paragraph()
+        run = p.add_run("核心优势")
+        self.set_font(run, size=11, bold=True)
+        p = doc.add_paragraph("、".join(data['advantages'][:3]))
+        self.set_font(p.runs[0], size=10)
+        doc.add_paragraph()
+
+        # 工作经历（极度紧凑，只放核心信息）
+        p = doc.add_paragraph()
+        run = p.add_run("工作经历")
+        self.set_font(run, size=11, bold=True)
+        for exp in data['experiences'][:3]: # 最多展示3段最近的经历
+            p = doc.add_paragraph()
+            run = p.add_run(f"{exp['company']} | {exp['position']} | {exp['time']}")
+            self.set_font(run, size=10.5, bold=True)
+            for ach in exp['achievements'][:2]: # 每段最多2个核心业绩
+                p = doc.add_paragraph(f"• {ach}")
+                self.set_font(p.runs[0], size=9.5)
+            doc.add_paragraph()
+
+        # 教育和技能（底部紧凑）
+        table = doc.add_table(rows=1, cols=2)
+        table.width = Cm(17)
+        table.autofit = False
+        table.columns[0].width = Cm(8.2)
+        table.columns[1].width = Cm(8.2)
+        self.hide_cell_border(table.cell(0,0))
+        self.hide_cell_border(table.cell(0,1))
+
+        # 教育背景
+        p = table.cell(0,0).paragraphs[0]
+        run = p.add_run("教育背景")
+        self.set_font(run, size=10.5, bold=True)
+        for edu in data['education'][:1]:
+            p = table.cell(0,0).add_paragraph(f"{edu['school']} | {edu['major']} | {edu['time']}")
+            self.set_font(p.runs[0], size=9.5)
+
+        # 核心技能
+        p = table.cell(0,1).paragraphs[0]
+        run = p.add_run("核心技能")
+        self.set_font(run, size=10.5, bold=True)
+        all_skills = []
+        for skills in data['skills'].values():
+            all_skills.extend(skills[:2])
+        p = table.cell(0,1).add_paragraph("、".join(all_skills[:8]))
+        self.set_font(p.runs[0], size=9.5)
+
+        doc.save(output_path)
+        return output_path
+    
     def generate_pdf(self, data, template='executive', output_path='resume.pdf'):
         """生成PDF格式简历，和Word样式1:1一致"""
         # 先生成临时Word文件
@@ -438,6 +629,10 @@ class ResumeGenerator:
                 return self.generate_modern(data, output_path)
             elif template == 'soe':
                 return self.generate_soe(data, output_path)
+            elif template == 'creative':
+                return self.generate_creative(data, output_path)
+            elif template == 'minimal':
+                return self.generate_minimal(data, output_path)
             else:
                 raise ValueError(f"不支持的模板类型：{template}，支持的模板：{list(self.templates.keys())}")
         else:
