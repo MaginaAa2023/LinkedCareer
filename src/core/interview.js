@@ -20,10 +20,10 @@ class Interview {
 - 联系电话
 - 邮箱地址
 - 所在城市
-- 期望岗位方向
 - （可选）性别、年龄
+- 如果你有旧简历，可以直接发给我，我会自动导入所有信息~
 
-例如：我叫张三，电话13800138000，邮箱zhangsan@example.com，现在在北京，期望找产品经理岗位，今年35岁。`,
+例如：我叫张三，电话13800138000，邮箱zhangsan@example.com，现在在北京，今年35岁。`,
         field: ['_meta', 'basicInfoRaw']
       },
       { key: 'educationStart', question: '接下来我们来记录教育经历，请问你最高学历的学校名称是什么？', field: ['education', 0, 'school'] },
@@ -39,7 +39,6 @@ class Interview {
     // 用来存储缺失的基础信息字段
     this.missingBasicFields = []
   }
-
   // 从用户输入中提取基础信息
   extractBasicInfo(text) {
     const info = {}
@@ -60,22 +59,8 @@ class Interview {
         }
       }
     }
-    // 特殊处理：岗位方向可能比较长，单独匹配
-    const positionMatch = text.match(/(?:期望|想找|求职|是)(?:岗位|职业|方向|工作)[:：]?\s*([^\n，。；]+)/i) || text.match(/岗位方向[:：]?\s*([^\n，。；]+)/i)
-    if (positionMatch) {
-      info.expectedPosition = positionMatch[1].trim()
-      // 去掉前面的"是"、"做"等前缀
-      info.expectedPosition = info.expectedPosition.replace(/^(是|做|从事)\s*/, '')
-    } else {
-      // 如果没有明确的岗位关键词，找最长的职业相关描述
-      const possiblePositions = text.match(/(?:产品经理|技术负责人|研发总监|运营总监|设计师|工程师|产品岗|技术岗|运营岗|管理岗)/i)
-      if (possiblePositions) {
-        info.expectedPosition = possiblePositions[0]
-      }
-    }
     return info
   }
-
   async startOnboarding() {
     this.step = 0
     this.data = {
@@ -87,7 +72,6 @@ class Interview {
     this.missingBasicFields = []
     return this.onboardingSteps[0].question
   }
-
   async processAnswer(answer) {
     const currentStep = this.onboardingSteps[this.step]
     // 处理基础信息收集阶段（合并提问+智能提取+缺失追问）
@@ -126,9 +110,7 @@ class Interview {
       }
       this.data[currentStep.field[0]][currentStep.field[1]][currentStep.field[2]] = answer.trim()
     }
-
     this.step++
-
     // 判断是否还有下一步
     if (this.step < this.onboardingSteps.length) {
       // 处理添加更多工作经历的逻辑
@@ -151,10 +133,8 @@ class Interview {
       }
       return this.onboardingSteps[this.step].question
     }
-
     return '✅ 初始化完成！'
   }
-
   async getReminderQuestion(frequency = 'weekly') {
     const questions = {
       daily: '今天你完成了哪些重要工作？有没有掌握新的技能或者取得什么成果？',
@@ -163,12 +143,10 @@ class Interview {
     }
     return questions[frequency] || questions.weekly
   }
-
   getCollectedData() {
     // 移除元数据
     const { _meta, ...cleanData } = this.data
     return cleanData
   }
 }
-
 module.exports = Interview

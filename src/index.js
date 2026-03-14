@@ -51,15 +51,37 @@ async function main() {
       console.log('\n✅ 记录已保存！')
       break
     case 'resume':
-      const mode = process.argv[3] || 'general'
-      const template = process.argv[4] || 'balanced'
-      const jobJD = process.argv[5]
-      console.log('📄 正在生成简历...\n')
+      console.log('📄 开始生成简历，请选择模板类型：')
+      console.log('1. 极简版（1页，适合初筛）')
+      console.log('2. 适中版（1-2页，适合大部分场景）')
+      console.log('3. 详细版（3-4页，适合终面）')
+      const templateChoice = await rl.question('请输入选项（1/2/3，默认2）：\n> ')
+      const templateMap = {
+        '1': 'minimal',
+        '2': 'balanced',
+        '3': 'detailed'
+      }
+      const template = templateMap[templateChoice] || 'balanced'
+      console.log('')
+      console.log('请选择生成模式：')
+      console.log('1. 通用模式（生成通用简历）')
+      console.log('2. 定向模式（针对具体岗位JD生成适配简历）')
+      const modeChoice = await rl.question('请输入选项（1/2，默认1）：\n> ')
+      const mode = modeChoice === '2' ? 'targeted' : 'general'
+      let jobJD = null
+      let targetPosition = null
+      if (mode === 'targeted') {
+        targetPosition = await rl.question('请输入目标岗位名称：\n> ')
+        jobJD = await rl.question('请粘贴岗位JD内容：\n> ')
+      }
+      console.log('')
+      console.log('正在生成简历...\n')
       const careerData = await memory.load()
       let generatedResume
       if (mode === 'targeted' && jobJD) {
         // 定向生成，先计算匹配度
         const matchResult = await resume.calculateMatchScore(jobJD, careerData)
+        console.log(`🎯 目标岗位：${targetPosition}`)
         console.log(`🎯 人岗匹配度：${matchResult.score}/100`)
         if (!matchResult.isRecommended) {
           console.log('⚠️  匹配度低于60分，不建议投递该岗位')
@@ -69,10 +91,10 @@ async function main() {
             break
           }
         }
-        console.log('匹配原因：')
+        console.log('匹配亮点：')
         matchResult.reasons.forEach(reason => console.log(`  ✅ ${reason}`))
         console.log('')
-        generatedResume = await resume.generate(careerData, { mode, template, jobJD })
+        generatedResume = await resume.generate(careerData, { mode, template, jobJD, targetPosition })
       } else {
         generatedResume = await resume.generate(careerData, { mode, template })
       }
@@ -82,7 +104,7 @@ async function main() {
       console.log(`✅ 简历已生成并保存到：${outputPath}`)
       // 生成求职信
       if (mode === 'targeted' && jobJD) {
-        const coverLetter = await resume.generateCoverLetter(careerData, jobJD)
+        const coverLetter = await resume.generateCoverLetter(careerData, jobJD, targetPosition)
         const coverLetterPath = `./cover_letter_${new Date().toISOString().split('T')[0]}.md`
         require('fs').writeFileSync(coverLetterPath, coverLetter, 'utf8')
         console.log(`✅ 配套求职信已生成并保存到：${coverLetterPath}`)
