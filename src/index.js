@@ -53,8 +53,37 @@ async function main() {
     case 'find':
       const subCommand = process.argv[3]
       if (subCommand === 'job') {
-        console.log('🔍 岗位匹配功能正在开发中，敬请期待~')
-        console.log('后续将支持对接BOSS直聘、智联招聘、脉脉等平台，自动匹配适合你的岗位')
+        console.log('🔍 岗位匹配功能')
+        console.log('请粘贴你收集的岗位JD内容，多个JD用空行分隔：\n')
+        const readline = require('readline/promises')
+        const rl = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout,
+          terminal: false
+        })
+        // 读取用户输入的所有JD内容
+        let jdText = ''
+        rl.on('line', (line) => {
+          jdText += line + '\n'
+        })
+        rl.on('close', async () => {
+          const JobMatcher = require('./core/jobMatcher')
+          const matcher = new JobMatcher()
+          const Memory = require('./core/memory')
+          const memory = new Memory()
+          const careerData = await memory.load()
+          // 解析JD列表
+          const jdList = matcher.parseJdList(jdText)
+          if (jdList.length === 0) {
+            console.log('❌ 未识别到有效的岗位JD，请检查输入格式')
+            return
+          }
+          console.log(`✅ 识别到 ${jdList.length} 个岗位，正在计算匹配度...\n`)
+          // 批量匹配
+          const results = await matcher.batchMatch(careerData, jdList)
+          // 输出结果
+          console.log(matcher.formatResults(results))
+        })
       } else {
         console.log('可用命令：/linkedcareer find job  匹配适合你的岗位')
       }
