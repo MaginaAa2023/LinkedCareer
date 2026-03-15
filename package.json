@@ -1,18 +1,13 @@
 {
   "name": "linkedcareer",
-  "version": "0.1.0",
-  "description": "Open source career management and resume generation plugin for OpenClaw/Claude Code/Codex",
+  "version": "1.0.0",
+  "description": "Career management and resume generation skill",
   "main": "src/index.js",
   "scripts": {
     "test": "node --test tests/"
   },
-  "keywords": [
-    "openclaw",
-    "career",
-    "resume",
-    "cv"
-  ],
-  "author": "MaginaAa2023",
+  "keywords": ["openclaw", "career", "resume"],
+  "author": "LinkedCareer Team",
   "license": "MIT",
   "directories": {
     "doc": "docs",

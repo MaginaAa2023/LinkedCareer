@@ -3,38 +3,18 @@
   "displayName": "LinkedCareer",
   "version": "1.0.0",
   "type": "runtime",
-  "description": "Career management and resume generation skill. Runtime: no network requests, all user data stored locally. Installation requires network to download pure JS dependency docx from npm.",
-  "longDescription": "LinkedCareer is an open source career management skill for working professionals. It helps you record career growth, extract professional highlights, and generate professional resumes optimized for specific job roles.\n\nCore Features:\n- Guided onboarding to build career profile\n- Deep dive analysis to find hidden achievements\n- Regular growth tracking (daily/weekly/monthly)\n- Multiple professional resume templates for different industries\n- JD matching to optimize resume for target roles\n- **Runtime Guarantee**: No network requests, all user data stored locally only, no data uploads\n- **Installation Note**: Requires network to download pure JS dependency `docx` from official npm registry, no binary downloads\n- Support exporting Word/Markdown formats, ready to use",
+  "description": "Career management and resume generation skill",
+  "longDescription": "LinkedCareer is an open source career management skill. It helps you record career growth, extract professional highlights, and generate professional resumes optimized for specific job roles. All user data is stored locally only. Installation requires network to download docx from npm.",
   "author": "LinkedCareer Team",
   "homepage": "https://github.com/MaginaAa2023/LinkedCareer",
   "repository": "https://github.com/MaginaAa2023/LinkedCareer.git",
   "source": "https://github.com/MaginaAa2023/LinkedCareer",
   "license": "MIT",
-  "install": "npm install --production",
-  "categories": ["生产力", "办公工具", "职业管理"],
-  "tags": ["简历生成", "职业管理", "求职", "成长记录"],
-  
-  "dependencies": {
-    "node": ">=16.0.0"
-  },
-  "commands": [
-    {
-      "name": "init",
-      "description": "初始化职业生涯档案",
-      "usage": "/linkedcareer init"
-    },
-    {
-      "name": "record",
-      "description": "记录工作成长",
-      "usage": "/linkedcareer record [daily/weekly/monthly]"
-    },
-    {
-      "name": "resume",
-      "description": "生成专业简历",
-      "usage": "/linkedcareer resume"
-    }
-  ],
-  "install": "npm install --production",
+  "categories": ["Productivity", "Office", "Career"],
+  "tags": ["resume", "career", "job search"],
+  "installSpec": "npm install --production",
+  "requiredPaths": ["~/.openclaw/workspace/LinkedCareer/user_data"],
+  "dependenciesNote": "Only depends on docx@8.5.0, pure JavaScript library from official npm registry.",
   "capabilities": {
     "network": false,
     "filesystem": true,
@@ -47,15 +27,8 @@
     "templates/resume_minimal.md",
     "templates/cover_letter.md",
     "SKILL.md",
-    "README.md",
     "package.json",
     "package-lock.json"
   ],
-  "runtimeNotes": "Runtime has ZERO network requests, all user data stored locally only. 'network: false' configuration is 100% accurate for runtime behavior.",
-  "installationNotes": "Installation ONLY requires network to download pure JavaScript dependency 'docx' from official npm registry, no binary/Chromium downloads, no untrusted sources.",
-  "installSpec": "npm install --production",
-  "requiredPaths": ["~/.openclaw/workspace/LinkedCareer/user_data"],
-  "dependenciesNote": "Only depends on docx@8.5.0, pure JavaScript library from official npm registry, no binary downloads",
-  "securityNotes": "No shell executions, no hardcoded credentials, no hidden logic, all code fully open source and auditable.",
   "minimumOpenClawVersion": "0.8.0"
 }
