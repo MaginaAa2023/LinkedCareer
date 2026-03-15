@@ -75,7 +75,13 @@ clawhub install linkedcareer
 ```
 按照引导填写信息，完成后会自动触发深度梳理，帮你挖掘职业亮点。
 
-### 2. 定期记录成长
+### 2. 深度梳理职业亮点
+```bash
+/linkedcareer deepdive
+```
+像资深HR一样通过提问挖掘你职业经历中的闪光点，自动沉淀到职业档案，生成简历时直接使用。
+
+### 3. 定期记录成长
 ```bash
 # 记录周度成长（推荐）
 /linkedcareer record weekly
@@ -85,7 +91,7 @@ clawhub install linkedcareer
 ```
 花2分钟记录本周/月做的项目和成果，长期坚持价值巨大。
 
-### 3. 一键生成专业简历
+### 4. 一键生成专业简历
 ```bash
 /linkedcareer resume
 ```
