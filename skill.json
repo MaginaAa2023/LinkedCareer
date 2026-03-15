@@ -35,5 +35,13 @@
     "filesystem": true,
     "shell": false
   },
+  "files": [
+    "src/**/*.js",
+    "templates/**/*.md",
+    "templates/**/*.html",
+    "SKILL.md",
+    "README.md",
+    "package.json"
+  ],
   "minimumOpenClawVersion": "0.8.0"
 }

@@ -50,7 +50,7 @@ async function main() {
       await memory.save(data)
       console.log('\n✅ 记录已保存！')
       break
-    case 'deep-dive':
+    case 'deepdive':
       console.log('🧠 苏格拉底式深度梳理')
       console.log('我会逐段梳理你的工作经历，通过提问帮你挖掘更多业绩亮点、能力成长和量化成果\n')
       // 后续实现深度梳理交互逻辑
@@ -127,11 +127,11 @@ async function main() {
       
       if (format === 'docx') {
         // 生成Word格式
-        const ResumeGenerator = require('./core/resume_generator')
-        const generator = new ResumeGenerator()
         const outputPath = `./resume_${template}_${new Date().toISOString().split('T')[0]}.docx`
-        await generator.generate(careerData, template, outputPath)
+        await resume.generateProfessionalWord(careerData, outputPath, { industry: 'internet' })
         console.log(`✅ Word版简历已生成并保存到：${outputPath}`)
+      } else if (format === 'pdf') {
+        console.log('⏳ PDF生成功能正在开发中，当前版本请先导出Word格式自行转换，感谢理解~')
       } else {
         // 生成Markdown格式
         const generatedResume = await resume.generate(careerData, { mode: 'general', template: 'balanced' })
@@ -161,6 +161,7 @@ async function main() {
     default:
       console.log('📋 LinkedCareer 可用命令:')
       console.log('  /linkedcareer init              初始化职业生涯档案')
+      console.log('  /linkedcareer deepdive          深度梳理职业经历挖掘亮点')
       console.log('  /linkedcareer record [daily/weekly/monthly]  记录工作成长')
       console.log('  /linkedcareer resume [general/targeted] [minimal/balanced/detailed] [JD内容]  生成简历')
       console.log('  /linkedcareer import <文件路径>  导入已有简历')

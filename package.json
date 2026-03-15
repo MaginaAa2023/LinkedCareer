@@ -27,7 +27,6 @@
   },
   "homepage": "https://github.com/MaginaAa2023/LinkedCareer#readme",
   "dependencies": {
-    "puppeteer": "^24.39.1",
     "docx": "^8.5.0"
   }
 }
