@@ -9,11 +9,9 @@
   "license": "MIT",
   "categories": ["生产力", "办公工具", "职业管理"],
   "tags": ["简历生成", "职业管理", "求职", "成长记录"],
-  "icon": "https://cdn.jsdelivr.net/gh/MaginaAa2023/LinkedCareer@main/icon.png",
+  
   "dependencies": {
-    "node": ">=16.0.0",
-    "python": ">=3.8.0",
-    "python-docx": "*"
+    "node": ">=16.0.0"
   },
   "commands": [
     {

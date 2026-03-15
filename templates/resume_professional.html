@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{name}} - 个人简历</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  
   <style>
     @page {
       size: A4;
@@ -63,15 +63,15 @@
 </head>
 <body>
   <!-- 头部信息 -->
-  <div class="text-center mb-8">
+  <div style="text-align: center; margin-bottom: 2rem;">
     <h1>{{name}}</h1>
-    <div class="text-gray-600">
+    <div style="color: #666;">
       电话：{{phone}} | 邮箱：{{email}} | 所在城市：{{city}} | 期望岗位：{{expectedPosition}}
     </div>
     {{#if highlights}}
-    <div class="mt-4 p-3 bg-blue-50 rounded border border-blue-200">
-      <div class="font-bold text-blue-800 mb-1">核心亮点</div>
-      <ul class="list-disc pl-5">
+    <div style="margin-top: 1rem; padding: 0.75rem; background-color: #ebf8ff; border-radius: 0.25rem; border: 1px solid #bee3f8;">
+      <div style="font-weight: bold; color: #2c5282; margin-bottom: 0.25rem;">核心亮点</div>
+      <ul style="list-style-type: disc; padding-left: 1.25rem;">
         {{#each highlights}}
         <li>{{this}}</li>
         {{/each}}
@@ -115,9 +115,9 @@
     <h2>教育经历</h2>
     {{#each education}}
     <div class="mb-2">
-      <div class="flex justify-between">
+      <div style="display: flex; justify-content: space-between;">
         <strong>{{this.school}} · {{this.major}} · {{this.degree}}</strong>
-        <div class="text-gray-600">{{this.startTime}} - {{this.endTime}}</div>
+        <div style="color: #666;">{{this.startTime}} - {{this.endTime}}</div>
       </div>
     </div>
     {{/each}}
