@@ -1,20 +1,4 @@
-# LinkedCareer
+# LinkedCareer · 你的专属数字职业伙伴
+> 🦞 OpenClaw 专属职业生涯管理工具，帮你记录成长、沉淀成果，一键生成专业级商务简历，让你的职业成长看得见。
 
-Career management and resume generation skill for OpenClaw.
-
-## Features
-- Guided onboarding to build career profile
-- Deep dive analysis to find hidden achievements
-- Regular growth tracking (daily/weekly/monthly)
-- Multiple professional resume templates
-- JD matching to optimize resume for roles
-- Runtime: No network requests, all data stored locally
-- Installation: Requires network to download docx from npm
-
-## Quick Start
-```
-/linkedcareer init
-/linkedcareer deepdive
-/linkedcareer record
-/linkedcareer resume
-```
+> 🔒 隐私保障：所有个人职业数据完全存储在你本地设备，无任何网络上传行为，100
