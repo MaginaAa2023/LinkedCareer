@@ -27,7 +27,7 @@ metadata:
 - Regular growth tracking (daily/weekly/monthly)
 - Multiple professional resume templates
 - JD matching to optimize resume for roles
-- Runtime: No network requests, all data stored locally
+- Runtime: No network requests, all user data stored locally
 - Installation: Requires network to download pure JS dependency docx from npm
 ## Quick Start
 ```

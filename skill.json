@@ -53,6 +53,9 @@
   ],
   "runtimeNotes": "Runtime has ZERO network requests, all user data stored locally only. 'network: false' configuration is 100% accurate for runtime behavior.",
   "installationNotes": "Installation ONLY requires network to download pure JavaScript dependency 'docx' from official npm registry, no binary/Chromium downloads, no untrusted sources.",
+  "installSpec": "npm install --production",
+  "requiredPaths": ["~/.openclaw/workspace/LinkedCareer/user_data"],
+  "dependenciesNote": "Only depends on docx@8.5.0, pure JavaScript library from official npm registry, no binary downloads",
   "securityNotes": "No shell executions, no hardcoded credentials, no hidden logic, all code fully open source and auditable.",
   "minimumOpenClawVersion": "0.8.0"
 }

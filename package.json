@@ -27,6 +27,6 @@
   },
   "homepage": "https://github.com/MaginaAa2023/LinkedCareer#readme",
   "dependencies": {
-    "docx": "^8.5.0"
+    "docx": "8.5.0"
   }
 }
