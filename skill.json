@@ -22,11 +22,14 @@
   },
   "files": [
     "src/index.js",
+    "src/core/memory.js",
+    "src/core/interview.js",
+    "src/core/resume.js",
+    "src/core/jobMatcher.js",
     "templates/resume_balanced.md",
     "templates/resume_minimal.md",
     "templates/cover_letter.md",
     "SKILL.md",
-    "README.md",
     "package.json",
     "package-lock.json"
   ],

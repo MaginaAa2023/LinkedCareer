@@ -6,7 +6,11 @@
   "scripts": {
     "test": "node --test tests/"
   },
-  "keywords": ["openclaw", "career", "resume"],
+  "keywords": [
+    "openclaw",
+    "career",
+    "resume"
+  ],
   "author": "LinkedCareer Team",
   "license": "MIT",
   "directories": {
