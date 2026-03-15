@@ -21,13 +21,8 @@
     "shell": false
   },
   "files": [
-    "src/core/memory.js",
-    "src/core/interview.js",
-    "src/core/resume.js",
-    "src/core/jobMatcher.js",
     "src/index.js",
     "templates/resume_balanced.md",
-    "templates/resume_detailed.md",
     "templates/resume_minimal.md",
     "templates/cover_letter.md",
     "SKILL.md",
