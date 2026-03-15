@@ -1,35 +1,37 @@
 ---
 name: linkedcareer
-description: Career management skill for OpenClaw, record growth, generate professional resumes
+description: OpenClaw skill for career management and professional resume generation
 metadata:
   openclaw:
-    requires: { bins: ["node"] }
+    requires:
+      bins: ["node"]
     install: "npm install --production"
     commands:
       - name: init
-        description: Initialize career profile
+        description: Initialize your career profile
       - name: deepdive
         description: Deep dive to extract career highlights
       - name: record
-        description: Record work growth
+        description: Record work growth and achievements
       - name: resume
-        description: Generate professional resumes
+        description: Generate professional resume in multiple formats
       - name: import
-        description: Import existing resume
+        description: Import existing resume to populate profile
 ---
 # LinkedCareer
-## Core Features
-- Intelligent onboarding to build career profile
-- Deep dive analysis to extract hidden achievements
-- Regular growth recording to track progress
-- Multi-template professional resume generation
-- JD matching to improve application success rate
-- 100% local data storage, no network requests
+## Features
+- Guided onboarding to build your career profile
+- Deep analysis to identify hidden achievements
+- Regular growth tracking with daily/weekly/monthly records
+- Multiple professional resume templates for different industries
+- JD matching to optimize resume for specific roles
+- **Runtime: 100% local, no network requests, all data stored locally**
+- **Install: Requires network to download npm dependencies (only docx, pure JS, no binaries)**
 
 ## Quick Start
 ```
-/linkedcareer init     # Initialize your career profile
+/linkedcareer init     # Initialize career profile
 /linkedcareer deepdive # Deep dive to find career highlights
-/linkedcareer record   # Record recent work growth
+/linkedcareer record   # Record work growth
 /linkedcareer resume   # Generate professional resume
 ```
