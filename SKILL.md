@@ -1,33 +1,35 @@
 ---
 name: linkedcareer
-description: 专为OpenClaw打造的职业生涯管理Skill，记录职业成长，智能生成适配岗位的专业简历
+description: Career management skill for OpenClaw, record growth, generate professional resumes
 metadata:
   openclaw:
     requires: { bins: ["node"] }
+    install: "npm install --production"
     commands:
       - name: init
-        description: 初始化职业生涯档案
+        description: Initialize career profile
       - name: deepdive
-        description: 深度梳理职业经历挖掘亮点
+        description: Deep dive to extract career highlights
       - name: record
-        description: 记录工作成长
+        description: Record work growth
       - name: resume
-        description: 生成多格式专业简历
+        description: Generate professional resumes
       - name: import
-        description: 导入已有简历补全档案
+        description: Import existing resume
 ---
 # LinkedCareer
-## 核心功能
-✅ 智能引导建立职业档案
-✅ 深度梳理挖掘职业亮点
-✅ 定期记录成长沉淀成果
-✅ 多模板生成专业简历
-✅ JD定向适配提升通过率
-✅ 数据完全本地存储
-## 快速使用
+## Core Features
+- Intelligent onboarding to build career profile
+- Deep dive analysis to extract hidden achievements
+- Regular growth recording to track progress
+- Multi-template professional resume generation
+- JD matching to improve application success rate
+- 100% local data storage, no network requests
+
+## Quick Start
 ```
-/linkedcareer init     # 初始化你的职业档案
-/linkedcareer deepdive # 深度梳理职业经历亮点
-/linkedcareer record   # 记录近期工作成长
-/linkedcareer resume   # 一键生成专业简历
+/linkedcareer init     # Initialize your career profile
+/linkedcareer deepdive # Deep dive to find career highlights
+/linkedcareer record   # Record recent work growth
+/linkedcareer resume   # Generate professional resume
 ```

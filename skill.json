@@ -30,6 +30,7 @@
       "usage": "/linkedcareer resume"
     }
   ],
+  "install": "npm install --production",
   "capabilities": {
     "network": false,
     "filesystem": true,
@@ -37,8 +38,10 @@
   },
   "files": [
     "src/**/*.js",
-    "templates/**/*.md",
-    "templates/**/*.html",
+    "templates/resume_balanced.md",
+    "templates/resume_detailed.md",
+    "templates/resume_minimal.md",
+    "templates/cover_letter.md",
     "SKILL.md",
     "README.md",
     "package.json"

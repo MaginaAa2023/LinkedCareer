@@ -68,7 +68,10 @@ LinkedCareer就是为了解决这些痛点而生：**平时点滴记录成长，
 ### 安装
 ```bash
 clawhub install linkedcareer
+# 手动安装依赖：npm install --production
 ```
+### 依赖说明
+本项目唯一依赖`docx`是纯JavaScript实现的开源库，无任何外部二进制下载、无Chromium等大体积依赖，安装时仅从npm仓库下载JS代码包，运行时完全离线，无任何网络请求，符合100%本地存储的声明。
 ### 1. 初始化你的职业档案
 ```bash
 /linkedcareer init
