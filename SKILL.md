@@ -1,7 +1,7 @@
 ---
 name: linkedcareer
 displayName: LinkedCareer
-description: Career management and professional resume generation skill for OpenClaw
+description: Career management and resume generation skill for OpenClaw
 metadata:
   openclaw:
     type: runtime
@@ -10,30 +10,29 @@ metadata:
     install: npm install --production
     commands:
       - name: init
-        description: Initialize your career profile
+        description: Initialize career profile
       - name: deepdive
-        description: Deep dive to extract career highlights
+        description: Extract career highlights
       - name: record
-        description: Record work growth and achievements
+        description: Record work growth
       - name: resume
-        description: Generate professional resume in multiple formats
+        description: Generate professional resume
       - name: import
-        description: Import existing resume to populate profile
+        description: Import existing resume
 ---
 # LinkedCareer
-## Core Features
-- Intelligent guided onboarding to build your career profile
-- Deep analysis to identify hidden career achievements
-- Regular growth tracking with daily/weekly/monthly records
-- Multiple professional resume templates for different industries
-- JD matching to optimize resume for specific job roles
-- **Privacy Guarantee**: All user career data is stored locally only, no data is ever uploaded to any external network
-- **Installation Note**: Installation requires network to download pure JavaScript dependency 'docx' from official npm registry, no binary downloads. Runtime has zero network requests, fully offline operation.
-
-## Quick Start Commands
+## Features
+- Guided onboarding to build career profile
+- Deep dive analysis to find hidden achievements
+- Regular growth tracking (daily/weekly/monthly)
+- Multiple professional resume templates
+- JD matching to optimize resume for roles
+- Runtime: No network requests, all data stored locally
+- Installation: Requires network to download pure JS dependency docx from npm
+## Quick Start
 ```
-/linkedcareer init     # Initialize career profile
-/linkedcareer deepdive # Deep dive to find career highlights
-/linkedcareer record   # Record recent work growth
-/linkedcareer resume   # Generate professional resume
+/linkedcareer init     # Initialize profile
+/linkedcareer deepdive # Extract highlights
+/linkedcareer record   # Record growth
+/linkedcareer resume   # Generate resume
 ```
